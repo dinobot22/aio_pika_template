@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+
 class FixedSizeDict:
     def __init__(self, max_size):
         """
