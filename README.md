@@ -1,7 +1,6 @@
 # 🐇 aio_pika RabbitMQ 消费端模板
 
-🚀 一个基于 `aio_pika` 的可复用 RabbitMQ 消费端模板，聚焦可靠消费、并发控制、心跳监控与可选结果发布。
-
+🚀 一个基于 [`aio_pika`](https://github.com/mosquito/aio-pika) 的可复用 RabbitMQ 消费端模板，聚焦可靠消费、并发控制、心跳监控与可选结果发布。
 ## 📋 项目概述
 
 ✨ 提供完整的消费端模板、示例与测试工具，帮助快速搭建稳定的消息处理服务。
@@ -55,7 +54,16 @@ aio_pika_template/
 
 ## 🚀 使用方法
 
-### 🚀 快速开始
+### ⚙️环境准备
+
+在运行项目前，请确保已安装并启动 RabbitMQ 消息队列服务。
+
+安装 Python 依赖：
+```bash
+pip install -r requirements.txt
+```
+
+### ⚙️ 快速开始
 
 1. 复制模板创建新消费者
    ```bash
