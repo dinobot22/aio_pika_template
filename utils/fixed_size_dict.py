@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-
 class FixedSizeDict:
     def __init__(self, max_size):
         """
@@ -44,6 +43,22 @@ class FixedSizeDict:
         """
         return len(self.cache)
 
+    def safe_remove(self, key):
+        """
+        删除指定的键并返回其值。
+        
+        :param key: 要删除的键
+        :param default: 如果键不存在时返回的默认值
+        :return: 键对应的值，如果键不存在且提供了default则返回default
+        """
+        if key in self.cache:
+            value = self.cache[key]
+            del self.cache[key]
+            return value
+        # elif default is not None:
+        else:
+            return None
+        
     def __repr__(self):
         """
         返回缓存的字符串表示。
@@ -71,5 +86,9 @@ if __name__ == "__main__":
     print("访问 'b':", cache["b"])
     print("访问后缓存:", cache)
 
+    # 使用 safe_remove 删除元素
+    value = cache.safe_remove("b")
+    print(f"safe_remove 'b' 返回值: {value}")
+    print("safe_remove 'b' 后:", cache)
     # 检查键是否存在
     print("'a' 是否在缓存中:", "a" in cache)
