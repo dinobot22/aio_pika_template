@@ -153,8 +153,8 @@ class RabbitMQConsumer(ABC):
     @abstractmethod
     def _generate_task_uuid(self, data: dict[str, Any]) -> str:
         """
-        【抽象方法 - 需要子类实现】    
-        为消息生成唯一的task_synthetic_uuid
+        【抽象方法 - 需要子类实现】  
+        为消息生成唯一的task_synthetic_uuid,用于缓存去重
         Args:
             data: 消息数据字典
         Returns:
@@ -378,22 +378,25 @@ class RabbitMQConsumer(ABC):
                 await self._handle_processing_error(message, e)
                 self.error_count += 1
     
+    @abstractmethod
     async def handle_message_func(self, data: dict[str, Any]) -> dict[str, Any] | None:
         """
-        【核心业务逻辑函数 - 需要子类或用户实现】
+        【核心业务逻辑 - 必须遵守的规范】
         
-        处理接收到的消息，实现具体的业务逻辑
+        重要要求：
+        1. 处理成功：返回有效结果或None
+        2. 处理失败：必须抛出异常，不要返回错误结果
+        3. 不要捕获业务异常，让基类统一处理
         
-        Args:
-            data: 从消息中解析出的数据字典
+        示例：
+        ✅ 正确做法：处理失败时抛出异常
+        ❌ 错误做法：返回 {'code': 500, 'error': '处理失败'}
         
         Returns:
-            处理结果字典，将被发布到结果队列
-            如果返回 None，则不发布结果
-        
+            dict: 处理成功的结果（将被缓存和发布）
+            None: 处理成功但无需发布结果
         Raises:
-            任何异常都会被捕获并触发重试机制
-        
+            Exception: 处理失败时必须抛出异常
         示例实现:
         ```python
         async def handle_message_func(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -413,16 +416,7 @@ class RabbitMQConsumer(ABC):
             }
         ```
         """
-        # 默认实现：仅记录日志
-        logger.warning("handle_message_func 未实现，请在子类中重写此方法")
-        logger.info(f"接收到的消息数据: {data}")
-        
-        # 示例：直接返回成功
-        return {
-            'code': 200,
-            'message': 'success',
-            'data': data
-        }
+        pass
     
     async def _handle_processing_error(
         self,
